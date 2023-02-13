@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <!-- <script src="https://kit.fontawesome.com/e7e8631f6b.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet"
+    href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script> -->
+<script type="module">
+    (async ({chrome, netscape}) => {
+    
+      // add Safari polyfill if needed
+      if (!chrome && !netscape)
+        await import('https://unpkg.com/@ungap/custom-elements');
+    
+      const {default: HighlightedCode} =
+        await import('https://unpkg.com/highlighted-code');
+    
+      // bootstrap a theme through one of these names
+      // https://github.com/highlightjs/highlight.js/tree/main/src/styles
+      HighlightedCode.useTheme('atom-one-dark');
+    })(self);
+    </script>
+
+
+        <title>Live code Editor</title>
+</head>
+<body>
+    <div class="container">
+        <div class="left">
+            <div class="title-container">
+ <label><i class="fa-brands fa-html5"></i> HTML</label>
+ 
+            </div>
+           
+            <textarea id="html-code" onkeyup="run()" is="highlighted-code" language="xml" spellcheck="false"></textarea>
+
+            <label><i class="fa-brands fa-css3-alt"></i> CSS</label>
+            <textarea id="css-code" onkeyup="run()" is="highlighted-code" language="css" spellcheck="false"></textarea>
+
+            <label><i class="fa-brands fa-square-js"></i> Javascript</label>
+            <textarea id="js-code" onkeyup="run()" is="highlighted-code" language="javascript" spellcheck="false"></textarea>
+        </div>
+        <div class="right">
+            <label><i class="fa-solid fa-play"></i> Output</label>
+            <iframe id="output"></iframe>
+        </div>
+    </div>
+
+    <script>
+
+         let htmlCode = document.getElementById('html-code').value;
+            let cssCode = document.getElementById('css-code').value;
+            let jsCode = document.getElementById('js-code').value;
+
+
+const expirationDays = 7;
+
+function run(){
+
+            const htmlCode = document.getElementById('html-code');
+            const cssCode = document.getElementById('css-code');
+            const jsCode = document.getElementById('js-code');
+            const output = document.getElementById('output')
+            output.contentDocument.body.innerHTML = htmlCode.value + "<style>" +cssCode.value+"</style>";
+            output.contentWindow.eval(jsCode.value);
+
+            setInterval(() => {
+const storedData = JSON.parse(localStorage.getItem("widgetData")) || {};
+  // Create an object to store the data
+  let data = {};
+
+  // Check if textarea 1 value has changed
+  if (htmlCode.value !== storedData.html) {
+    data.html= htmlCode.value;
+  } else {
+    data.html = storedData.html;
+  }
+
+  // Check if textarea 2 value has changed
+  if (cssCode.value !== storedData.css) {
+    data.css = cssCode.value;
+  } else {
+    data.css = storedData.css;
+  }
+
+  // Check if textarea 3 value has changed
+  if (jsCode.value !== storedData.js) {
+    data.js =jsCode.value;
+  } else {
+    data.js = storedData.js;
+  }
+
+   const expirationDate = new Date();
+  expirationDate.setDate(expirationDate.getDate() + expirationDays);
+  data.expirationDate = expirationDate.toISOString();
+  // Save the data to local storage
+  localStorage.setItem("widgetData", JSON.stringify(data));}, 10000);
+}
+
+
+// Function to check if the data in local storage has expired
+function checkDataExpiration() {
+  // Retrieve the data from local storage
+  const storedData = JSON.parse(localStorage.getItem("widgetData")) || {};
+
+  // Check if the expiration date is set
+  if (storedData.expirationDate) {
+    const expirationDate = new Date(storedData.expirationDate);
+    const currentDate = new Date();
+
+    // Compare the current date with the expiration date
+    if (currentDate >= expirationDate) {
+      // Data has expired, remove it from local storage
+      localStorage.removeItem("widgetData");
+    }
+  }
+}
+
+
+
+window.onload = function() {
+  function loadDataFromLocalStorage() {
+
+     const htmlCode = document.getElementById('html-code');
+    const cssCode = document.getElementById('css-code');
+    const jsCode = document.getElementById('js-code');
+
+    const storedData = JSON.parse(localStorage.getItem("widgetData"));
+// Check if the data exists
+  if (storedData) {
+    // Use the data
+   htmlCode.value = storedData.html;
+    cssCode.value = storedData.css;
+    jsCode.value = storedData.js;
+
+    console.log(storedData.css)
+  }
+  }
+  loadDataFromLocalStorage();
+};
+
+
+    </script>
+
+</body>
+</html>
